@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 15m
+    cookie:
+      http-only: true
+#      secure: true
+security:
+  sessions-count: 2
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/demo
+    username: postgres
+    password: mysecretpassword
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+  resources:
+    static-locations: "classpath:/static/"
+
+logging.level.org.spring-framework.web: DEBUG
+logging.level.org.hibernate: INFO
+logging.level.com.example.demo: DEBUG
