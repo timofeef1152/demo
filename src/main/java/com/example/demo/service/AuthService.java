@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.model.entity.ActiveToken;
+import com.example.demo.model.entity.DisabledToken;
 import com.example.demo.model.entity.LoginAttemptInfo;
 import com.example.demo.model.entity.User;
-import com.example.demo.repository.ActiveTokenRepository;
+import com.example.demo.repository.DisabledTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenUtil;
 import com.example.demo.security.UserPrincipal;
@@ -36,7 +36,7 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private ActiveTokenRepository activeTokenRepository;
+    private DisabledTokenRepository disabledTokenRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -49,31 +49,27 @@ public class AuthService {
         authenticate(username, password);
         UserDetails userDetails = userRepository.findByUsername(username).map(UserPrincipal::new)
                 .orElseThrow(() -> new UserNotFoundException("user " + username + " doesn't exists"));
-        String token = jwtTokenUtil.generateToken(userDetails);
-
-        ActiveToken activeToken = new ActiveToken();
-        activeToken.setToken(token);
-        activeToken.setIpAddress(ipAddress);
-        activeTokenRepository.save(activeToken);
-
-        return token;
+        return jwtTokenUtil.generateToken(userDetails);
     }
 
     @Transactional
-    public void disableAuthenticationToken(String rawToken) {
+    public void disableAuthenticationToken(String rawToken, String ipAddress) {
         String token = jwtTokenUtil.removeBearer(rawToken);
-        activeTokenRepository.deleteByToken(token);
+
+        DisabledToken disabledToken = new DisabledToken();
+        disabledToken.setToken(token);
+        disabledToken.setIpAddress(ipAddress);
+        disabledTokenRepository.save(disabledToken);
     }
 
     @Transactional
     public boolean isTokenActive(String token, UserDetails userDetails, String ipAddress) {
-        Optional<ActiveToken> optionalActiveToken = activeTokenRepository.findByTokenAndIpAddress(token, ipAddress);
-        if (!optionalActiveToken.isPresent()) {
+        Optional<DisabledToken> optionalDisabledToken = disabledTokenRepository.findByTokenAndIpAddress(token, ipAddress);
+        if (optionalDisabledToken.isPresent()) {
             return false;
         }
 
-        ActiveToken activeToken = optionalActiveToken.get();
-        return jwtTokenUtil.validateToken(token, userDetails) && activeToken.getIpAddress().equals(ipAddress);
+        return jwtTokenUtil.validateToken(token, userDetails);
     }
 
     private void checkLoginAttemptAccessibility(String username) {

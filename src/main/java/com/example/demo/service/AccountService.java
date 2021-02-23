@@ -31,7 +31,7 @@ public class AccountService {
             CurrencyDoesntMatchException, InsufficientFundsException {
         Account fromAcc = accountRepository.findByAccountNumber(accountPaymentDto.getFromAccNumber())
                 .orElseThrow(() -> new EntityNotFoundException("Account " + accountPaymentDto.getFromAccNumber() + " doesn't exist!"));
-        Account toAcc = accountRepository.findByAccountNumber(accountPaymentDto.getFromAccNumber())
+        Account toAcc = accountRepository.findByAccountNumber(accountPaymentDto.getToAccNumber())
                 .orElseThrow(() -> new EntityNotFoundException("Account " + accountPaymentDto.getToAccNumber() + " doesn't exist!"));
 
         AccountPayment accountPayment = new AccountPayment();

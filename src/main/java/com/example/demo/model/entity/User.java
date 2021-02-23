@@ -28,9 +28,6 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Account> accounts;
 
-    @Column
-    private UUID loggingId;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "login_attempt_id", referencedColumnName = "id")
     private LoginAttemptInfo loginAttemptInfo;

@@ -16,8 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "active_tokens")
-public class ActiveToken {
+@Table(name = "disabled_tokens")
+public class DisabledToken {
     @Id
     @GeneratedValue
     @Column(name = "id", length = 16, unique = true, nullable = false)
@@ -29,11 +29,7 @@ public class ActiveToken {
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
-    @UpdateTimestamp
-    @Column(name = "lastupdate_datetime")
-    private LocalDateTime updatedDatetime;
-
     @CreationTimestamp
-    @Column(name = "created_datetime")
-    private LocalDateTime createdDateTime;
+    @Column(name = "blocked_datetime")
+    private LocalDateTime blockedDateTime;
 }

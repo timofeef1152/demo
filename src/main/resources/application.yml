@@ -7,7 +7,7 @@ server:
       http-only: true
 #      secure: true
 security:
-  sessions-count: 2
+  sessions-count: 3
 
 spring:
   datasource:
